@@ -66,7 +66,7 @@ int main(void)
 
 > **为什么出现结构体？**
 > 
-> 为了表示一些复炸的数据，而普通的基本类型变量无法满足要求。
+> 为了表示一些复杂的数据，而普通的基本类型变量无法满足要求。
 
 > **什么叫结构体？**
 > 
@@ -75,9 +75,12 @@ int main(void)
 > **如何使用结构体？**
 >
 > struct Student st = {1000, "zhangsan", 20};
+>
 > struct Student *pst = &st;
+>
 > 1. st.sid
-> 1. pst->sid (pst所指向的结构体变量中的sid这个成员)
+>
+> 2. pst->sid (pst所指向的结构体变量中的sid这个成员)
 
 > **主要事项**
 > 
@@ -183,12 +186,140 @@ int main(void)
     
     int len;
     printf("请输入你需要分配的数组的长度：len = ");
+    
     scanf("%d", len); // 接收一个用户输入的长度
+    
+    // 动态分配len个int的内存
     int *pArr = (int *)malloc(sizeof(int) * len);
     
+    *pArr = 4; // 类似于a[0] = 4
+    pArr[1] = 10; // 类似于a[1] = 10
+    
+    // 我们可以把pArr当作一个普通数组来使用
+    for(int i = 0; i<len; i++)
+    {
+        scanf("%d", &pArr[i]);
+    }
+    
+    for(int i = 0; i<len; i++)
+    {
+        printf("%d\n", pArr[i]);
+    }
+    
+    free(pArr); // 释放内存
     
     return 0;
 }
 ```
 
 *注意：只要没有使用`malloc()`分配的内存都是静态分配的内存。*
+
+
+## 跨函数使用内存
+
+```C
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+struct Student
+{
+    int sid;
+    int age;
+};
+
+struct Student *CreateStudent(void); // 创建
+void ShowStudent(struct Student *ps); // 显示
+
+int main(void)
+{
+    struct Student *ps = NULL;
+    ps = CreateStudent();
+    ShowStudent(ps);
+}
+
+struct Student *CreateStudent(void)
+{
+    struct Student *p = (struct Student *)malloc(sizeof(struct Student));
+    p->sid = 99;
+    p->age = 88;
+    return p;
+}
+
+void ShowStudent(struct Student *ps)
+{
+    printf("sid = %d, age = %d\n", ps->sid, ps->age);
+}
+```
+
+*注意：在函数体内声明的非`malloc()`分配的变量，会在函数结束后销毁，所以要想在函数结束后返回值仍然有效，需要分配在堆里面。*
+
+## typedef的用法
+
+没有用到`typedef`的`struct`的写法
+
+```C
+struct Student {
+    int sid;
+    char name[100];
+    char gender;
+};
+
+int main(void)
+{
+    struct Student st;
+    struct Student *ps = &st;
+    
+    return 0;
+}
+```
+
+使用`typedef`后，`struct`的写法
+
+Example 1:
+
+```C
+typedef struct {
+    int sid;
+    char name[100];
+    char gender;
+} Student;
+
+int main(void)
+{
+    Student st;
+    Student *ps = &st;
+    
+    return 0;
+}
+```
+
+Example 2:
+
+```C
+typedef struct Student {
+    int sid;
+    char name[100];
+    char gender;
+}* PST; // PST等价于 struct Student *
+
+int main(void)
+{
+    struct Student st;
+    PST ps = &st;
+    
+    return 0;
+}
+```
+
+Example 3:
+
+```C
+typedef struct Student
+{
+    int sid;
+    char name[100];
+    char gender;
+}* PST, ST; // 等价于 ST代表了 struct Student, PST代表 struct Student *
+```
+

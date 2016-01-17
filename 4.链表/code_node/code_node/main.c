@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// 声明一个非循环单链表
 typedef struct Node {
     int data;
     struct Node *pNext;
@@ -16,13 +17,23 @@ typedef struct Node {
 
 // 创建一个非循环单链表，并返回
 PNODE create_list(void);
+
+// 遍历链表
 void traverse_list(PNODE pHead);
+
+// 判断链表是否为空
 int is_empty(PNODE pHead);
+
+// 计算链表的长度
 int length_list(PNODE pHead);
+
 // 在pHead所指向链表的第pos个节点的前面插入一个新的节点，该节点的值是val
 int insert_list(PNODE pHead, int pos, int val);
+
 // 删除
 int delete_list(PNODE pHead, int pos);
+
+// 从小到大排序
 void sort_list(PNODE pHead);
 
 int main(void)
@@ -41,7 +52,10 @@ int main(void)
     
     insert_list(pHead, 2, 11);
     traverse_list(pHead);
-
+    
+    delete_list(pHead, 1);
+    traverse_list(pHead);
+    
     return 0;
 }
 
@@ -78,7 +92,7 @@ PNODE create_list(void)
         pTail->pNext = pNew;
         pTail = pNew;
     }
-
+    
     return pHead;
 };
 
@@ -166,5 +180,30 @@ int insert_list(PNODE pHead, int pos, int val)
 
 int delete_list(PNODE pHead, int pos)
 {
+    if (is_empty(pHead)) {
+        printf("链表为空\n");
+        exit(-1);
+    }
     
+    if (pos > length_list(pHead)) {
+        printf("超出链表索引！\n");
+        exit(-1);
+    }
+    
+    PNODE p = pHead->pNext;
+    PNODE prv = p;
+    
+    int i = 0;
+    while (NULL != p) {
+        if (i==pos) {
+            break;
+        }
+        i++;
+        prv = p;
+        p = p->pNext;
+    }
+    
+    prv->pNext = p->pNext;
+    
+    return p->data;
 }

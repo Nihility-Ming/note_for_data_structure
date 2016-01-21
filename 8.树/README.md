@@ -38,26 +38,33 @@
 
 1. **一般树**
 
+    ![image description](images/一般树.jpg)
+
     任意一个节点的子节点的个数都不受限制。
 
 2. **二叉树**
-
-    ![image description](images/tree_2.png)
 
     任意一个节点的子节点个数最多两个，且子节点的位置不可更改。 
     
     ***分类***
     
     1. 一般二叉树
+    
     2. 满二叉树
+    
+    ![image description](images/满二叉树.jpg)
     
     在不增加树的层数的前提下，无法再多添加一个节点的二叉树就是满二叉树。
     
     3. 完全二叉树
     
+    ![image description](images/完全二叉树.jpg)
+    
         如果只是删除了满二叉树最底层最右边的连续若干个节点，这样形成的二叉树就是完全二叉树。
 
 3. **森林**
+
+    ![image description](images/森林.jpg)
 
     n个互不相交的树的集合
     
@@ -116,3 +123,183 @@
     
 ## 二叉树操作
 
+### 遍历
+
+1. 先序遍历*［先访问根节点］*
+
+    ![image description](images/先序遍历.jpg)
+
+    1. 先访问根节点
+    2. 再先序访问左子树
+    3. 再先序访问右子树
+    
+2. 中序遍历*［中间访问根节点］*
+
+    ![image description](images/中序遍历.jpg)
+
+    1. 中序遍历左子树
+    2. 再访问根节点
+    3. 再中序遍历右子树
+    
+3. 后序遍历*［最后访问根节点］*
+
+    ![image description](images/后序遍历.jpg)
+
+    1. 中序遍历左子树
+    2. 中序遍历右子树
+    3. 再访问根节点
+
+### 题目
+
+**已知两种遍历序列求原始二叉树。**
+
+> 通过先序和中序 或者 中序和后序，我们可以还原出原始的二叉树。
+> 
+> 但是通过先序和后序是无法还原出原始的二叉树的。
+>
+> 换种说法：
+只有通过先序和中顺，或通过中序和后序，我们才可以唯一的确定一个二叉树。
+
+![image description](images/example_01.jpg)
+
+![image description](images/example_02.jpg)
+
+![image description](images/example_03.jpg)
+
+## 应用
+
+1. 树是数据库中数据组织的一种重要形式。
+2. 操作系统子父进程的关系本身就是一棵树。
+3. 面向对象语言中类的继承关系
+4. 赫夫曼树
+
+## Example
+
+![image description](images/example.jpg)
+
+```C
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct BTNode {
+    char data;
+    struct BTNode *pLChild;
+    struct BTNode *pRChild;
+} BTNode;
+
+// 根据上图创建一个二叉树
+BTNode *CreateBTree(void);
+
+// 先序输出二叉树
+void preTraverseBTree(BTNode *);
+
+// 中序输出二叉树
+void midTraverseBTree(BTNode *);
+
+// 后序输出二叉树
+void afterTraverseBTree(BTNode *);
+
+int main(int argc, const char * argv[]) {
+    
+    BTNode *pT = CreateBTree();
+    
+    // 调试
+    preTraverseBTree(pT);
+    midTraverseBTree(pT);
+    afterTraverseBTree(pT);
+    
+    return 0;
+}
+
+BTNode *CreateBTree(void)
+{
+    BTNode *pA = (BTNode *)malloc(sizeof(BTNode));
+    BTNode *pB = (BTNode *)malloc(sizeof(BTNode));
+    BTNode *pC = (BTNode *)malloc(sizeof(BTNode));
+    BTNode *pD = (BTNode *)malloc(sizeof(BTNode));
+    BTNode *pE = (BTNode *)malloc(sizeof(BTNode));
+    
+    pA->data = 'A';
+    pB->data = 'B';
+    pC->data = 'C';
+    pD->data = 'D';
+    pE->data = 'E';
+    
+    pA->pLChild = pB;
+    pA->pRChild = pC;
+    pB->pLChild = pB->pRChild = NULL;
+    pC->pLChild = pD;
+    pC->pRChild = NULL;
+    pD->pLChild = NULL;
+    pD->pRChild = pE;
+    pE->pLChild = pE->pRChild = NULL;
+    
+    return pA;
+}
+
+// 先序输出二叉树
+void preTraverseBTree(BTNode *pT)
+{
+    /*
+    1. 先访问根节点
+    2. 再先序访问左子树
+    3. 再先序访问右子树
+     */
+    if (pT) {
+        printf("%c\n", pT->data);
+        if (pT->pLChild) {
+            preTraverseBTree(pT->pLChild);
+        }
+        
+        if (pT->pRChild) {
+            preTraverseBTree(pT->pRChild);
+        }
+    }
+}
+
+// 中序输出二叉树
+void midTraverseBTree(BTNode *pT)
+{
+    /*
+     1. 中序遍历左子树
+     2. 再访问根节点
+     3. 再中序遍历右子树
+     */
+    if (pT) {
+        if (pT->pLChild) {
+            midTraverseBTree(pT->pLChild);
+        }
+        
+        printf("%c\n", pT->data);
+        
+        if (pT->pRChild) {
+            midTraverseBTree(pT->pRChild);
+        }
+    }
+}
+
+// 后序输出二叉树
+void afterTraverseBTree(BTNode *pT)
+{
+    /*
+     1. 中序遍历左子树
+     2. 中序遍历右子树
+     3. 再访问根节点
+     */
+    if (pT) {
+        if (pT->pLChild) {
+            midTraverseBTree(pT->pLChild);
+        }
+        
+        if (pT->pRChild) {
+            midTraverseBTree(pT->pRChild);
+        }
+        
+        printf("%c\n", pT->data);
+    }
+}
+
+
+
+```

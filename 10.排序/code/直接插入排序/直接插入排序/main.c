@@ -10,8 +10,10 @@
 
 void example_01(int *nums, int length)
 {
-    for (int i=2; i<length; i++) {
-        if (nums[i] < nums[i-1]) {
+    for (int i=2; i<length; i++)
+    {
+        if (nums[i] < nums[i-1])
+        {
             nums[0] = nums[i];
             int j;
             for (j = i-1; nums[j]>nums[0]; j--)

@@ -57,9 +57,9 @@ void example_03(int *nums, int length)
                 int temp = nums[j];
                 nums[j] = nums[j+1];
                 nums[j+1] = temp;
+                
+                flag = 1;
             }
-            
-            flag = 1;
         }
     }
 }
